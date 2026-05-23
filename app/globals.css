@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@layer base {
+  :root {
+    --background: #ffffff;
+    --foreground: #0a0a0a;
+    --card: #f9fafb;
+    --card-border: #e5e7eb;
+    --muted: #6b7280;
+    --input: #f3f4f6;
+  }
+
+  .dark {
+    --background: #0a0a0a;
+    --foreground: #f9fafb;
+    --card: #111111;
+    --card-border: #1f1f1f;
+    --muted: #9ca3af;
+    --input: #1a1a1a;
+  }
+
+  * {
+    @apply border-[var(--card-border)];
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: 'Inter', sans-serif;
+    @apply antialiased;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 dark:bg-gray-700 rounded-full;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .card {
+    background-color: var(--card);
+    border: 1px solid var(--card-border);
+    @apply rounded-xl;
+  }
+  .input-base {
+    background-color: var(--input);
+    border: 1px solid var(--card-border);
+    color: var(--foreground);
+    @apply rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-brand-green/50 transition-all;
+  }
+}
