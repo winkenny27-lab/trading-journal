@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { DeleteTradeButton } from "@/components/trades/DeleteTradeButton";
 import { CloseTradeButton } from "@/components/trades/CloseTradeButton";
+import { ScreenshotGallery } from "@/components/trades/ScreenshotGallery";
 
 const resultStyles: Record<string, string> = {
   win: "bg-brand-green/10 text-brand-green border-brand-green/20",
@@ -212,6 +213,9 @@ export default async function TradePage({ params }: { params: { id: string } }) 
           </p>
         </div>
       )}
+
+      {/* Screenshots */}
+      <ScreenshotGallery tradeId={t.id} userId={user.id} />
     </div>
   );
 }

@@ -2,6 +2,7 @@
 
 import { Menu, LogOut, User } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
+import { FeedbackModal } from "@/components/shared/FeedbackModal";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -35,6 +36,7 @@ export function Topbar({ title, onMenuClick }: TopbarProps) {
       </div>
 
       <div className="flex items-center gap-2">
+        <FeedbackModal />
         <ThemeToggle />
         <div className="relative">
           <button

@@ -9,7 +9,7 @@ import { ChecklistSection, type ChecklistResponse } from "./ChecklistSection";
 import { calcRRFromPrices } from "@/lib/utils/tradeStats";
 import type { Trade, TradeFormData, Direction, TradeResult, EmotionalState } from "@/lib/types/trade";
 import { cn } from "@/lib/utils/cn";
-import { Save, Loader2 } from "lucide-react";
+import { Save, Loader2, ImagePlus, X } from "lucide-react";
 
 interface TradeFormProps {
   initialData?: Trade;
@@ -64,6 +64,7 @@ export function TradeForm({ initialData, mode }: TradeFormProps) {
     initialData ? tradeToFormData(initialData) : defaultData
   );
   const [checklistResponses, setChecklistResponses] = useState<ChecklistResponse[]>([]);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeSection, setActiveSection] = useState(0);
@@ -151,10 +152,22 @@ export function TradeForm({ initialData, mode }: TradeFormProps) {
       );
     }
 
+    // Upload screenshots
+    for (const file of selectedFiles) {
+      const ext = file.name.split(".").pop();
+      const path = `${user.id}/${tradeId}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+      const { error: uploadErr } = await supabase.storage
+        .from("trade-screenshots")
+        .upload(path, file);
+      if (!uploadErr) {
+        await supabase.from("trade_screenshots").insert({ trade_id: tradeId, url: path });
+      }
+    }
+
     router.push(`/trades/${tradeId}`);
   };
 
-  const sections = ["Instrument & Price", "Journal Notes", "Emotion & Checklist"];
+  const sections = ["Instrument & Price", "Journal Notes", "Emotion & Checklist", "Screenshots"];
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl mx-auto">
@@ -380,6 +393,76 @@ export function TradeForm({ initialData, mode }: TradeFormProps) {
               className="input-base w-full resize-none"
             />
           </div>
+        </div>
+      )}
+
+      {/* Section 3: Screenshots */}
+      {activeSection === 3 && (
+        <div className="card p-6 space-y-4">
+          <div>
+            <p className="text-xs text-[var(--muted)] mb-3">
+              Add chart screenshots or trade setups. Images will be saved with the trade.
+            </p>
+
+            {/* Drop zone */}
+            <label
+              className={cn(
+                "flex flex-col items-center gap-2 p-6 rounded-xl border-2 border-dashed cursor-pointer transition-all",
+                "border-[var(--card-border)] hover:border-brand-green/50 hover:bg-brand-green/5"
+              )}
+            >
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                className="hidden"
+                onChange={(e) => {
+                  const files = Array.from(e.target.files ?? []).filter(
+                    (f) => f.size <= 10 * 1024 * 1024
+                  );
+                  setSelectedFiles((prev) => [...prev, ...files]);
+                  e.target.value = "";
+                }}
+              />
+              <div className="w-10 h-10 rounded-xl bg-brand-green/10 flex items-center justify-center">
+                <ImagePlus size={20} className="text-brand-green" />
+              </div>
+              <p className="text-sm font-medium">Click to add screenshots</p>
+              <p className="text-xs text-[var(--muted)]">PNG, JPG, GIF — max 10MB each</p>
+            </label>
+          </div>
+
+          {/* Preview grid */}
+          {selectedFiles.length > 0 && (
+            <div className="grid grid-cols-2 gap-3">
+              {selectedFiles.map((file, i) => (
+                <div key={i} className="relative group rounded-xl overflow-hidden border border-[var(--card-border)] aspect-video bg-[var(--input)]">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={URL.createObjectURL(file)}
+                    alt={file.name}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedFiles((prev) => prev.filter((_, j) => j !== i))}
+                      className="flex items-center justify-center w-8 h-8 rounded-lg bg-brand-red/90 text-white hover:bg-brand-red transition-colors"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                  <p className="absolute bottom-0 left-0 right-0 text-xs text-white bg-black/50 px-2 py-1 truncate">
+                    {file.name}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {selectedFiles.length === 0 && (
+            <p className="text-center text-xs text-[var(--muted)]">No images selected yet.</p>
+          )}
         </div>
       )}
 
