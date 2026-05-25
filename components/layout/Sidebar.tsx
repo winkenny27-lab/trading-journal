@@ -9,12 +9,14 @@ import {
   CheckSquare,
   Settings,
   TrendingUp,
+  BarChart2,
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/analytics", label: "Analytics", icon: BarChart2 },
   { href: "/trades", label: "Trade Log", icon: BookOpen },
   { href: "/trades/new", label: "New Trade", icon: PlusCircle },
   { href: "/checklists", label: "Checklists", icon: CheckSquare },
