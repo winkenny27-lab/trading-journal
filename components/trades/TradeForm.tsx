@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { InstrumentSelect } from "./InstrumentSelect";
 import { EmotionSelector } from "./EmotionSelector";
@@ -60,6 +60,7 @@ function tradeToFormData(trade: Trade): TradeFormData {
 
 export function TradeForm({ initialData, mode }: TradeFormProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [form, setForm] = useState<TradeFormData>(
     initialData ? tradeToFormData(initialData) : defaultData
   );
@@ -68,6 +69,27 @@ export function TradeForm({ initialData, mode }: TradeFormProps) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeSection, setActiveSection] = useState(0);
+
+  // Pre-fill from risk calculator query params
+  useEffect(() => {
+    if (mode !== "new") return;
+    const entry = searchParams.get("entry");
+    const sl = searchParams.get("sl");
+    const tp = searchParams.get("tp");
+    const dir = searchParams.get("direction");
+    const lot = searchParams.get("lot");
+    if (entry || sl || tp || dir || lot) {
+      setForm((prev) => ({
+        ...prev,
+        ...(entry && { entry_price: entry }),
+        ...(sl && { stop_loss: sl }),
+        ...(tp && { take_profit: tp }),
+        ...(dir && { direction: dir as Direction }),
+        ...(lot && { lot_size: lot }),
+      }));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const set = (field: keyof TradeFormData, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
