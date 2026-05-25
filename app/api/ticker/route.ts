@@ -1,5 +1,14 @@
 import { NextResponse } from "next/server";
 
+const CRYPTO_IDS = [
+  { id: "bitcoin", symbol: "BTC/USD" },
+  { id: "ethereum", symbol: "ETH/USD" },
+  { id: "solana", symbol: "SOL/USD" },
+  { id: "ripple", symbol: "XRP/USD" },
+  { id: "binancecoin", symbol: "BNB/USD" },
+  { id: "dogecoin", symbol: "DOGE/USD" },
+];
+
 const FOREX_PAIRS = [
   { symbol: "EURUSD", base: "EUR", quote: "USD" },
   { symbol: "GBPUSD", base: "GBP", quote: "USD" },
@@ -37,18 +46,16 @@ function simulatePrice(base: number, seed: number) {
 }
 
 export async function GET() {
+  const result: { symbol: string; name: string; price: number; change: number; changePercent: number }[] = [];
+
+  // Fetch real forex data
   try {
-    // Fetch real forex data from open.er-api.com (free, no key needed)
     const res = await fetch("https://open.er-api.com/v6/latest/USD", {
       next: { revalidate: 60 },
     });
-
-    const forexData: { symbol: string; name: string; price: number; change: number; changePercent: number }[] = [];
-
     if (res.ok) {
       const json = await res.json();
       const rates = json.rates ?? {};
-
       FOREX_PAIRS.forEach((pair, i) => {
         let price: number;
         if (pair.base === "USD") {
@@ -57,24 +64,36 @@ export async function GET() {
           price = rates[pair.base] ? 1 / rates[pair.base] : 1;
         }
         const { change, changePercent } = simulatePrice(price, i + 1);
-        forexData.push({ symbol: pair.symbol, name: pair.symbol, price, change, changePercent });
+        result.push({ symbol: pair.symbol, name: pair.symbol, price, change, changePercent });
       });
     }
+  } catch { /* skip forex on error */ }
 
-    // Simulate realistic index/stock prices
-    const staticData = STATIC_INSTRUMENTS.map((inst, i) => {
-      const { price, change, changePercent } = simulatePrice(inst.basePrice, i + 10);
-      return { symbol: inst.symbol, name: inst.name, price, change, changePercent };
-    });
+  // Fetch real crypto prices from CoinGecko (free, no key)
+  try {
+    const ids = CRYPTO_IDS.map((c) => c.id).join(",");
+    const res = await fetch(
+      `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd&include_24hr_change=true`,
+      { next: { revalidate: 60 } }
+    );
+    if (res.ok) {
+      const json = await res.json();
+      CRYPTO_IDS.forEach((c) => {
+        const entry = json[c.id];
+        if (!entry) return;
+        const price: number = entry.usd ?? 0;
+        const changePercent: number = entry.usd_24h_change ?? 0;
+        const change = price * (changePercent / 100);
+        result.push({ symbol: c.symbol, name: c.symbol, price, change, changePercent });
+      });
+    }
+  } catch { /* skip crypto on error */ }
 
-    const data = [...forexData, ...staticData];
-    return NextResponse.json({ data, updatedAt: new Date().toISOString() });
-  } catch {
-    // Fallback: all simulated
-    const data = STATIC_INSTRUMENTS.map((inst, i) => {
-      const { price, change, changePercent } = simulatePrice(inst.basePrice, i + 10);
-      return { symbol: inst.symbol, name: inst.name, price, change, changePercent };
-    });
-    return NextResponse.json({ data, updatedAt: new Date().toISOString() });
-  }
+  // Simulated indices/stocks
+  const staticData = STATIC_INSTRUMENTS.map((inst, i) => {
+    const { price, change, changePercent } = simulatePrice(inst.basePrice, i + 10);
+    return { symbol: inst.symbol, name: inst.name, price, change, changePercent };
+  });
+
+  return NextResponse.json({ data: [...result, ...staticData], updatedAt: new Date().toISOString() });
 }
