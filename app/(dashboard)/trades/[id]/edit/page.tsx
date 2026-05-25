@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { redirect, notFound } from "next/navigation";
 import { TradeForm } from "@/components/trades/TradeForm";
@@ -28,7 +29,9 @@ export default async function EditTradePage({ params }: { params: { id: string }
         <ArrowLeft size={15} />
         Back to Trade
       </Link>
-      <TradeForm mode="edit" initialData={trade as Trade} />
+      <Suspense fallback={<div className="text-sm text-[var(--muted)]">Loading...</div>}>
+        <TradeForm mode="edit" initialData={trade as Trade} />
+      </Suspense>
     </div>
   );
 }

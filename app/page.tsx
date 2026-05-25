@@ -11,7 +11,6 @@ import {
   Zap,
   ArrowRight,
   Check,
-  Twitter,
 } from "lucide-react";
 
 export default async function HomePage() {

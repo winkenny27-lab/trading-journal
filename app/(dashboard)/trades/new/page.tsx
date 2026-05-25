@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { TradeForm } from "@/components/trades/TradeForm";
 
 export default function NewTradePage() {
@@ -6,7 +7,9 @@ export default function NewTradePage() {
       <p className="text-sm text-[var(--muted)] mb-6">
         Fill in the details below to log a new trade.
       </p>
-      <TradeForm mode="new" />
+      <Suspense fallback={<div className="text-sm text-[var(--muted)]">Loading...</div>}>
+        <TradeForm mode="new" />
+      </Suspense>
     </div>
   );
 }
