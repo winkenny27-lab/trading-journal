@@ -16,7 +16,6 @@ export function buildWeeklyEmailHtml({
   winRate,
   totalPnL,
   bestTrade,
-  worstTrade,
   appUrl,
 }: {
   displayName: string;
