@@ -6,6 +6,7 @@ export interface Profile {
   display_name?: string | null;
   plan: Plan;
   timezone: string;
+  weekly_email: boolean;
   created_at: string;
   updated_at: string;
 }

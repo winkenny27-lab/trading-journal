@@ -4,13 +4,15 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import type { Profile } from "@/lib/types/user";
-import { Loader2, Save, Crown } from "lucide-react";
+import { Loader2, Save, Crown, Mail } from "lucide-react";
+import { cn } from "@/lib/utils/cn";
 
 export default function SettingsPage() {
   const router = useRouter();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [displayName, setDisplayName] = useState("");
   const [timezone, setTimezone] = useState("UTC");
+  const [weeklyEmail, setWeeklyEmail] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
@@ -28,6 +30,7 @@ export default function SettingsPage() {
             setProfile(data as Profile);
             setDisplayName(data.display_name ?? "");
             setTimezone(data.timezone ?? "UTC");
+            setWeeklyEmail(data.weekly_email ?? false);
           }
         });
     });
@@ -39,7 +42,7 @@ export default function SettingsPage() {
     const supabase = createClient();
     await supabase
       .from("profiles")
-      .update({ display_name: displayName, timezone, updated_at: new Date().toISOString() })
+      .update({ display_name: displayName, timezone, weekly_email: weeklyEmail, updated_at: new Date().toISOString() })
       .eq("id", profile.id);
     setSaving(false);
     setSaved(true);
@@ -89,6 +92,44 @@ export default function SettingsPage() {
               <option key={tz} value={tz}>{tz}</option>
             ))}
           </select>
+        </div>
+        <button
+          onClick={save}
+          disabled={saving}
+          className="flex items-center gap-2 px-5 py-2.5 bg-brand-green text-white rounded-lg text-sm font-semibold hover:bg-brand-green/90 disabled:opacity-50 transition-colors"
+        >
+          {saving ? <Loader2 size={15} className="animate-spin" /> : <Save size={15} />}
+          {saved ? "Saved!" : saving ? "Saving..." : "Save Changes"}
+        </button>
+      </div>
+
+      {/* Email notifications */}
+      <div className="card p-6 space-y-4">
+        <div className="flex items-center gap-2">
+          <Mail size={16} className="text-[var(--muted)]" />
+          <h2 className="text-sm font-semibold">Email Notifications</h2>
+        </div>
+        <div className="flex items-center justify-between py-1">
+          <div>
+            <p className="text-sm font-medium">Weekly performance report</p>
+            <p className="text-xs text-[var(--muted)] mt-0.5">
+              Receive a summary of your trades, win rate, and P&L every Sunday.
+            </p>
+          </div>
+          <button
+            onClick={() => setWeeklyEmail((v) => !v)}
+            className={cn(
+              "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200",
+              weeklyEmail ? "bg-brand-green" : "bg-[var(--input)]"
+            )}
+          >
+            <span
+              className={cn(
+                "pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform transition-transform duration-200",
+                weeklyEmail ? "translate-x-5" : "translate-x-0"
+              )}
+            />
+          </button>
         </div>
         <button
           onClick={save}
