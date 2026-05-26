@@ -26,7 +26,6 @@ export function buildWeeklyEmailHtml({
   winRate: number;
   totalPnL: number;
   bestTrade: number | null;
-  worstTrade: number | null;
   appUrl: string;
 }) {
   const pnlColor = totalPnL > 0 ? "#22c55e" : totalPnL < 0 ? "#ef4444" : "#f9fafb";

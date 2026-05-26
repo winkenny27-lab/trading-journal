@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { sendEmail } from "@/lib/email";
 import { buildWeeklyEmailHtml } from "@/lib/utils/emailTemplate";
 import { calcWinRate, calcTotalPnL } from "@/lib/utils/tradeStats";
-import { calcBestTrade, calcWorstTrade } from "@/lib/utils/analytics";
+import { calcBestTrade } from "@/lib/utils/analytics";
 import type { Trade } from "@/lib/types/trade";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://mytradelogapp.com";
@@ -57,7 +57,6 @@ export async function POST(req: Request) {
         winRate: calcWinRate(weekTrades),
         totalPnL: calcTotalPnL(weekTrades),
         bestTrade: calcBestTrade(weekTrades),
-        worstTrade: calcWorstTrade(weekTrades),
         appUrl: APP_URL,
       });
 
