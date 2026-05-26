@@ -11,6 +11,7 @@ import {
   Zap,
   ArrowRight,
   Check,
+  Mail,
 } from "lucide-react";
 
 export default async function HomePage() {
@@ -212,6 +213,11 @@ export default async function HomePage() {
                 title: "Screenshot Gallery",
                 desc: "Attach chart screenshots to each trade. Review your setups and learn from what you see.",
               },
+              {
+                icon: Mail,
+                title: "Weekly Email Report",
+                desc: "Get a summary of your week's trades, win rate, and P&L delivered to your inbox every Sunday.",
+              },
             ].map(({ icon: Icon, title, desc }) => (
               <div
                 key={title}
@@ -319,6 +325,7 @@ export default async function HomePage() {
                   "Performance analytics",
                   "Risk calculator",
                   "Screenshot gallery",
+                  "Weekly email reports",
                   "Priority support",
                 ].map((f) => (
                   <li key={f} className="flex items-center gap-2.5 text-sm text-gray-300">
