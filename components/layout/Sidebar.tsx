@@ -11,6 +11,7 @@ import {
   TrendingUp,
   BarChart2,
   Calculator,
+  Trophy,
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
@@ -18,6 +19,7 @@ import { cn } from "@/lib/utils/cn";
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/analytics", label: "Analytics", icon: BarChart2 },
+  { href: "/achievements", label: "Achievements", icon: Trophy },
   { href: "/calculator", label: "Risk Calculator", icon: Calculator },
   { href: "/trades", label: "Trade Log", icon: BookOpen },
   { href: "/trades/new", label: "New Trade", icon: PlusCircle },

@@ -5,6 +5,7 @@ import { PnLChart } from "@/components/dashboard/PnLChart";
 import { WinRateChart } from "@/components/dashboard/WinRateChart";
 import { RecentTrades } from "@/components/dashboard/RecentTrades";
 import { MotivationQuote } from "@/components/dashboard/MotivationQuote";
+import { StreakBadgePreview } from "@/components/dashboard/StreakBadgePreview";
 import {
   calcWinRate,
   calcTotalPnL,
@@ -78,6 +79,9 @@ export default async function DashboardPage() {
         </div>
         <WinRateChart trades={allTrades} />
       </div>
+
+      {/* Streaks + achievements */}
+      <StreakBadgePreview trades={allTrades} />
 
       {/* Recent trades */}
       <RecentTrades trades={allTrades} />
