@@ -78,7 +78,7 @@ function mapTradeLogRow(headers: string[], row: string[], userId: string): Parti
   return {
     user_id: userId,
     instrument: get("Instrument") ?? "Unknown",
-    instrument_type: (get("Instrument Type") as Trade["instrument_type"]) ?? "forex",
+    instrument_type: (get("Instrument Type") as Trade["instrument_type"]) ?? "forex_major",
     direction: (get("Direction") as Trade["direction"]) ?? "long",
     entry_price: num(get("Entry Price")),
     exit_price: num(get("Exit Price")),
@@ -91,7 +91,7 @@ function mapTradeLogRow(headers: string[], row: string[], userId: string): Parti
     result,
     entry_date: toISO(get("Entry Date") ?? get("Date")),
     exit_date: get("Exit Date") ? toISO(get("Exit Date")) : null,
-    emotional_state: get("Emotional State") ?? null,
+    emotional_state: (get("Emotional State") as Trade["emotional_state"]) ?? null,
     tags: get("Tags") ? get("Tags")!.split(";").filter(Boolean) : [],
     reason_for_entry: get("Reason for Entry") ?? null,
     trade_narrative: get("Trade Narrative") ?? null,
