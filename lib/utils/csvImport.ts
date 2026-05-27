@@ -43,7 +43,7 @@ function detectFormat(headers: string[]): "tradelog" | "mt4" | "mt5" | "generic"
   return "generic";
 }
 
-function inferResult(pnl: number | null): "win" | "loss" | "breakeven" {
+function inferResult(pnl: number | null | undefined): "win" | "loss" | "breakeven" {
   if (pnl == null) return "breakeven";
   if (pnl > 0) return "win";
   if (pnl < 0) return "loss";
