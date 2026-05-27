@@ -112,7 +112,7 @@ function mapMT4Row(headers: string[], row: string[], userId: string): Partial<Tr
   return {
     user_id: userId,
     instrument: get("Symbol") ?? "Unknown",
-    instrument_type: "forex",
+    instrument_type: "forex_major",
     direction,
     entry_price: num(get("Open Price")),
     exit_price: num(get("Close Price")),
