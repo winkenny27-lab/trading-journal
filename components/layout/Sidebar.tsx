@@ -12,6 +12,7 @@ import {
   BarChart2,
   Calculator,
   Trophy,
+  Upload,
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
@@ -23,6 +24,7 @@ const navItems = [
   { href: "/calculator", label: "Risk Calculator", icon: Calculator },
   { href: "/trades", label: "Trade Log", icon: BookOpen },
   { href: "/trades/new", label: "New Trade", icon: PlusCircle },
+  { href: "/import", label: "Import Trades", icon: Upload },
   { href: "/checklists", label: "Checklists", icon: CheckSquare },
   { href: "/settings", label: "Settings", icon: Settings },
 ];

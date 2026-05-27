@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import type { Profile } from "@/lib/types/user";
-import { Loader2, Save, Crown, Mail } from "lucide-react";
+import { Loader2, Save, Crown, Mail, Building2 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
+import { BROKERS } from "@/lib/constants/brokers";
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -13,6 +14,7 @@ export default function SettingsPage() {
   const [displayName, setDisplayName] = useState("");
   const [timezone, setTimezone] = useState("UTC");
   const [weeklyEmail, setWeeklyEmail] = useState(false);
+  const [broker, setBroker] = useState("");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
@@ -31,6 +33,7 @@ export default function SettingsPage() {
             setDisplayName(data.display_name ?? "");
             setTimezone(data.timezone ?? "UTC");
             setWeeklyEmail(data.weekly_email ?? false);
+            setBroker(data.broker ?? "");
           }
         });
     });
@@ -42,7 +45,7 @@ export default function SettingsPage() {
     const supabase = createClient();
     await supabase
       .from("profiles")
-      .update({ display_name: displayName, timezone, weekly_email: weeklyEmail, updated_at: new Date().toISOString() })
+      .update({ display_name: displayName, timezone, weekly_email: weeklyEmail, broker: broker || null, updated_at: new Date().toISOString() })
       .eq("id", profile.id);
     setSaving(false);
     setSaved(true);
@@ -130,6 +133,40 @@ export default function SettingsPage() {
               )}
             />
           </button>
+        </div>
+        <button
+          onClick={save}
+          disabled={saving}
+          className="flex items-center gap-2 px-5 py-2.5 bg-brand-green text-white rounded-lg text-sm font-semibold hover:bg-brand-green/90 disabled:opacity-50 transition-colors"
+        >
+          {saving ? <Loader2 size={15} className="animate-spin" /> : <Save size={15} />}
+          {saved ? "Saved!" : saving ? "Saving..." : "Save Changes"}
+        </button>
+      </div>
+
+      {/* Broker */}
+      <div className="card p-6 space-y-4">
+        <div className="flex items-center gap-2">
+          <Building2 size={16} className="text-[var(--muted)]" />
+          <h2 className="text-sm font-semibold">Broker</h2>
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-[var(--muted)] mb-1.5">Your Broker</label>
+          <select
+            value={broker}
+            onChange={(e) => setBroker(e.target.value)}
+            className="input-base w-full"
+          >
+            <option value="">— Select your broker —</option>
+            {BROKERS.map((b) => (
+              <option key={b.value} value={b.value}>
+                {b.emoji} {b.label}
+              </option>
+            ))}
+          </select>
+          <p className="text-xs text-[var(--muted)] mt-1.5">
+            Used to suggest the correct import format when uploading trade history.
+          </p>
         </div>
         <button
           onClick={save}

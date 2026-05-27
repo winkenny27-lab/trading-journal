@@ -13,6 +13,7 @@ const PAGE_TITLES: Record<string, string> = {
   "/calculator": "Risk Calculator",
   "/trades": "Trade Log",
   "/trades/new": "New Trade",
+  "/import": "Import Trades",
   "/checklists": "Checklists",
   "/settings": "Settings",
 };

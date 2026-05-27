@@ -2,8 +2,9 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { TradeCard } from "@/components/trades/TradeCard";
+import { ExportButton } from "@/components/trades/ExportButton";
 import type { Trade, TradeResult, InstrumentType } from "@/lib/types/trade";
-import { PlusCircle, Search } from "lucide-react";
+import { PlusCircle, Search, Upload } from "lucide-react";
 
 interface SearchParams {
   result?: string;
@@ -42,15 +43,25 @@ export default async function TradesPage({
   return (
     <div className="max-w-3xl mx-auto space-y-5">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2 flex-wrap">
         <p className="text-sm text-[var(--muted)]">{allTrades.length} trade{allTrades.length !== 1 ? "s" : ""}</p>
-        <Link
-          href="/trades/new"
-          className="flex items-center gap-2 px-4 py-2 bg-brand-green text-white rounded-lg text-sm font-semibold hover:bg-brand-green/90 transition-colors"
-        >
-          <PlusCircle size={15} />
-          New Trade
-        </Link>
+        <div className="flex items-center gap-2">
+          <ExportButton trades={allTrades} />
+          <Link
+            href="/import"
+            className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg border border-[var(--card-border)] hover:border-brand-green/50 hover:text-brand-green transition-colors"
+          >
+            <Upload size={14} />
+            Import
+          </Link>
+          <Link
+            href="/trades/new"
+            className="flex items-center gap-2 px-4 py-2 bg-brand-green text-white rounded-lg text-sm font-semibold hover:bg-brand-green/90 transition-colors"
+          >
+            <PlusCircle size={15} />
+            New Trade
+          </Link>
+        </div>
       </div>
 
       {/* Filters */}

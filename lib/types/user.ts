@@ -7,6 +7,7 @@ export interface Profile {
   plan: Plan;
   timezone: string;
   weekly_email: boolean;
+  broker?: string | null;
   created_at: string;
   updated_at: string;
 }
