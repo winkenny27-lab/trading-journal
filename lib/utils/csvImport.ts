@@ -50,10 +50,10 @@ function inferResult(pnl: number | null): "win" | "loss" | "breakeven" {
   return "breakeven";
 }
 
-function num(v: string | undefined): number | null {
-  if (v == null || v === "") return null;
+function num(v: string | undefined): number | undefined {
+  if (v == null || v === "") return undefined;
   const n = parseFloat(v.replace(/[^0-9.\-]/g, ""));
-  return isNaN(n) ? null : n;
+  return isNaN(n) ? undefined : n;
 }
 
 function toISO(v: string | undefined): string {
@@ -119,9 +119,9 @@ function mapMT4Row(headers: string[], row: string[], userId: string): Partial<Tr
     stop_loss: num(get("S/L") ?? get("Stop Loss")),
     take_profit: num(get("T/P") ?? get("Take Profit")),
     lot_size: num(get("Volume") ?? get("Size")),
-    risk_amount: null,
+    risk_amount: undefined,
     pnl,
-    rr_ratio: null,
+    rr_ratio: undefined,
     result: inferResult(pnl),
     entry_date: toISO(get("Open Time")),
     exit_date: get("Close Time") ? toISO(get("Close Time")) : null,
